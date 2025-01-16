@@ -1,14 +1,19 @@
 package com.labforward.wordfrequency.config;
 
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.labforward.wordfrequency.service.strategy.SimilarityStrategy;
+import com.labforward.wordfrequency.service.strategy.impl.LevenshteinSimilarityStrategy;
+
+/**
+ * This is a config class to inject LevenshteinSimilarityStrategy
+ **/
 @Configuration
 public class WordFrequencyConfig {
 
   @Bean
-  public LevenshteinDistance levenshteinDistance() {
-    return new LevenshteinDistance();
+  public SimilarityStrategy similarityStrategy() {
+    return new LevenshteinSimilarityStrategy();
   }
 }

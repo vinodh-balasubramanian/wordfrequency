@@ -10,9 +10,50 @@ This project provides a REST API to analyze the frequency of a target word in a 
 - Identify similar words using the Levenshtein distance algorithm.
 - Validates input for empty or invalid values.
 - Provides test coverage and static code analysis using SonarQube and JaCoCo.
+- OpenAPI documentation
 
 ---
+## **Scope of the Solution**
+The goal of this project was to develop a simple REST API that performs word frequency analysis on a notebook entry 
+and identifies similar words. 
+The solution involves:
 
+1. Implementing a simple Spring Boot-based API to handle HTTP requests.
+2. Utilization of Apache Commons Text for finding similar words based on the Levenshtein distance.
+3. Validating input to ensure no empty or invalid values are processed.
+4. Extensive test coverage (up to 90%) and the resolution of code quality issues (0%) by integrating SonarQube for code quality checks and JaCoCo for test coverage analysis.
+5. Well API documentation using OpenAPI, alongside clean code practices with meaningful comments to ensure maintainability
+
+---
+## **Time Dedicated**
+The time dedicated to this solution was approximately 4-6 hours. During this time, the following tasks were completed:
+
+- Development of core features like frequency analysis and similar word identification. 
+- Validation of user input and error handling.
+- Extensive unit test cases.
+- Containerization of the application using Docker. 
+- Integration of SonarQube for code quality and test coverage analysis.
+
+---
+## **Future Improvements (If More Time Was Available)**
+If more time was available, I would have expanded the solution to include the following:
+
+- Scalability Improvements: Use Elasticsearch for optimize the Levenshtein distance algorithm for handling larger datasets.
+- Additional Features: Use Bedrock Embeddings for Semantic Search functionality
+- UI Integration: Create a simple front-end application using React to allow users to interact.
+- Caching: Caching the API responses, as the response will remain the same for each identical request.
+
+---
+## **OpenAPI Documentation**
+This project utilizes OpenAPI 3.0 for generating API documentation. OpenAPI is a specification for defining and documenting RESTful APIs in a standardized. 
+It provides a clear structure to describe the API endpoints, request parameters, response formats.
+Swagger UI is provided to visualize and interact with the API directly from the browser.
+
+Once the application is running, the Swagger UI can be accessed at:
+
+http://localhost:8080/swagger-ui/index.html
+
+---
 ## **Prerequisites**
 1. **Java**: JDK 17 or later.
 2. **Gradle**: Installed for building the project.

@@ -1,6 +1,5 @@
 package com.labforward.wordfrequency.service;
 
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,19 +14,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import com.labforward.wordfrequency.constant.MessageConstants;
 import com.labforward.wordfrequency.dto.WordFrequencyRequest;
 import com.labforward.wordfrequency.dto.WordFrequencyResponse;
 import com.labforward.wordfrequency.exception.InvalidTargetWordException;
 import com.labforward.wordfrequency.exception.TargetWordTooLongException;
+import com.labforward.wordfrequency.service.impl.DefaultWordFrequencyService;
+import com.labforward.wordfrequency.service.strategy.SimilarityStrategy;
+import com.labforward.wordfrequency.service.strategy.impl.LevenshteinSimilarityStrategy;
 
- class WordFrequencyServiceTest {
+class WordFrequencyServiceTest {
   private WordFrequencyService wordFrequencyService;
 
   @BeforeEach
   void setup() {
-    LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
-    wordFrequencyService = new DefaultWordFrequencyService(levenshteinDistance);
+    SimilarityStrategy similarityStrategy = new LevenshteinSimilarityStrategy();
+    wordFrequencyService = new DefaultWordFrequencyService(similarityStrategy);
   }
+
   @Test
   void analyzeWordFrequency_invalidTargetWord() {
     WordFrequencyRequest request = new WordFrequencyRequest("Word Words Wor word", "Word Words");
@@ -45,34 +49,39 @@ import com.labforward.wordfrequency.exception.TargetWordTooLongException;
       wordFrequencyService.analyzeWordFrequency(request);
     });
   }
+
   @Test
   void analyzeWordFrequency_whenEmptyNotebookEntry_thenVerifyException() {
     IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
       new WordFrequencyRequest("", "word");
     });
-    assertEquals("Notebook entry cannot be empty or null", exception.getMessage());
+    assertEquals(MessageConstants.INVALID_NOTEBOOK_ENTRY, exception.getMessage());
   }
+
   @Test
   void analyzeWordFrequency_whenEmptyTargetWord_thenVerifyException() {
     IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
       new WordFrequencyRequest("Word word", "");
     });
-    assertEquals("Target word cannot be empty or null", exception.getMessage());
+    assertEquals(MessageConstants.EMPTY_TARGET_WORD, exception.getMessage());
   }
+
   @Test
   void analyzeWordFrequency_whenNullNotebookEntry_thenVerifyException() {
     IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
       new WordFrequencyRequest(null, "word");
     });
-    assertEquals("Notebook entry cannot be empty or null", exception.getMessage());
+    assertEquals(MessageConstants.INVALID_NOTEBOOK_ENTRY, exception.getMessage());
   }
+
   @Test
   void analyzeWordFrequency_whenNullTargetWord_thenVerifyException() {
     IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
       new WordFrequencyRequest("word", null);
     });
-    assertEquals("Target word cannot be empty or null", exception.getMessage());
+    assertEquals(MessageConstants.EMPTY_TARGET_WORD, exception.getMessage());
   }
+
   @Test
   void analyzeWordFrequency_whenValidInput_thenReturnWordFrequencyResponse() {
     WordFrequencyRequest request = new WordFrequencyRequest("Word Words Wor word", "Word");
@@ -87,24 +96,25 @@ import com.labforward.wordfrequency.exception.TargetWordTooLongException;
     assertEquals(1, response.frequency());
     assertTrue(response.similarWords().containsAll(List.of("Words", "Wor", "word")));
   }
-   @ParameterizedTest
-   @CsvSource({
-       "'Word', 'Word', 1, 0",// for singleWord test
-       "'word word WORD', 'word', 2, 0",// for caseInsensitivty
-       "'I want to work LabForward', 'Forward', 0, 0"//for no match found
-   })
-   void analyzeWordFrequency_multipleScenarios_thenVerifyOutputs(
-       String inputText, String targetWord, int expectedFrequency, int expectedSimilarWordsCount) {
 
-     WordFrequencyRequest request = new WordFrequencyRequest(inputText, targetWord);
+  @ParameterizedTest
+  @CsvSource({"'Word', 'Word', 1, 0",// for singleWord test
+      "'word word WORD', 'word', 2, 0",// for caseInsensitivty
+      "'I want to work LabForward', 'Forward', 0, 0"//for no match found
+  })
+  void analyzeWordFrequency_multipleScenarios_thenVerifyOutputs(
+      String inputText, String targetWord, int expectedFrequency, int expectedSimilarWordsCount) {
 
-     WordFrequencyResponse response = wordFrequencyService.analyzeWordFrequency(request);
+    WordFrequencyRequest request = new WordFrequencyRequest(inputText, targetWord);
 
-     assertEquals(expectedFrequency, response.frequency(),
-         () -> "Expected frequency mismatch for input: " + inputText + ", target: " + targetWord);
-     assertEquals(expectedSimilarWordsCount, response.similarWords().size(),
-         () -> "Expected similar words count mismatch for input: " + inputText + ", target: " + targetWord);
-   }
+    WordFrequencyResponse response = wordFrequencyService.analyzeWordFrequency(request);
+
+    assertEquals(expectedFrequency, response.frequency(),
+        () -> "Expected frequency mismatch for input: " + inputText + ", target: " + targetWord);
+    assertEquals(expectedSimilarWordsCount, response.similarWords().size(),
+        () -> "Expected similar words count mismatch for input: " + inputText + ", target: " + targetWord);
+  }
+
   @Test
   void analyzeWordFrequency_whenWordWithSpecialCharacters_thenVerifyOutput() {
     WordFrequencyRequest request = new WordFrequencyRequest("Word! word.", "word");
@@ -113,14 +123,19 @@ import com.labforward.wordfrequency.exception.TargetWordTooLongException;
     assertEquals(0, response.frequency());
     assertTrue(response.similarWords().containsAll(List.of("word.")));
   }
+
   @Test
   void analyzeWordFrequency_whenLargeText_thenCorrectWordFrequency() throws IOException {
     String largeText = Files.readString(Path.of("src/test/resources/largeText.txt"));
     WordFrequencyRequest request = new WordFrequencyRequest(largeText, "data");
     WordFrequencyResponse response = wordFrequencyService.analyzeWordFrequency(request);
     assertEquals(8, response.frequency());
-    assertTrue(response.similarWords().containsAll(List.of("data.","data,","Data","date")));
+    assertTrue(response.similarWords().containsAll(List.of("data.", "data,", "Data", "date")));
   }
+
+  /**
+   * To test high volume of similarity texts
+   **/
   @Test
   void analyzeWordFrequency_whenLargeTextHighSimilarity_thenVerifyWordFrequency() throws IOException {
     String largeText = Files.readString(Path.of("src/test/resources/repeatText.txt"));
@@ -129,6 +144,10 @@ import com.labforward.wordfrequency.exception.TargetWordTooLongException;
     assertEquals(0, response.frequency());
     assertTrue(response.similarWords().containsAll(List.of("test")));
   }
+
+  /**
+   * To test larger repeating 10,000 texts
+   **/
   @Test
   void analyzeWordFrequency_whenLargeTextWithRepeatedWords_thenVerifyWordFrequency() throws IOException {
     String largeText = Files.readString(Path.of("src/test/resources/repeatText.txt"));
