@@ -49,8 +49,9 @@ public class DefaultWordFrequencyService implements WordFrequencyService {
     long startTime = System.currentTimeMillis();
     String noteBookEntry = request.noteBookEntry();
     String targetWord = request.targetWord();
+    int noteBookEntryLength = (noteBookEntry == null) ? 0 : noteBookEntry.length();
     logger.info("analyzeWordFrequency: Target word = {}, Notebook entry length = {}", targetWord,
-        noteBookEntry.length());
+        noteBookEntryLength);
     validateInputs(targetWord, noteBookEntry);
     int frequency = calculateFrequency(noteBookEntry, targetWord);
     List<String> similarWords = findSimilarWords(targetWord, noteBookEntry);
@@ -64,16 +65,25 @@ public class DefaultWordFrequencyService implements WordFrequencyService {
    *
    * @param targetWord    the word to be analyzed
    * @param notebookEntry the text in which the word is analyzed
+   * @throws IllegalArgumentException if the notebookEntry word is null or empty
+   * @throws IllegalArgumentException if the target word is null or empty
    * @throws InvalidTargetWordException if the target word contains more than one word
    * @throws TargetWordTooLongException if the target word is longer than the notebook entry
    */
   private void validateInputs(String targetWord, String notebookEntry) {
     logger.debug("validateInputs started");
+    if (notebookEntry == null || notebookEntry.isBlank()) {
+      logger.error("Invalid notebook entry: it cannot be null or blank.");
+      throw new IllegalArgumentException(MessageConstants.INVALID_NOTEBOOK_ENTRY);
+    }
+    if (targetWord == null || targetWord.isBlank()) {
+      logger.error("Invalid target word: it cannot be null or blank.");
+      throw new IllegalArgumentException(MessageConstants.EMPTY_TARGET_WORD);
+    }
     if (targetWord.split("\\s+").length > 1) {
       logger.error("Target word '{}' contains more than one word.", targetWord);
       throw new InvalidTargetWordException(MessageConstants.TARGET_WORD_INVALID);
     }
-
     if (targetWord.length() > notebookEntry.length()) {
       logger.error("Target word '{}' cannot be longer than the notebook entry.", targetWord);
       throw new TargetWordTooLongException(MessageConstants.TARGET_WORD_TOO_LONG);

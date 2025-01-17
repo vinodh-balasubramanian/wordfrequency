@@ -12,4 +12,5 @@ public class MessageConstants {
   public static final String INVALID_NOTEBOOK_ENTRY = "Notebook entry cannot be empty or null.";
   public static final String EMPTY_TARGET_WORD = "Target word cannot be empty or null.";
   public static final String BAD_REQUEST = "Bad Request";
+  public static final String VALIDATION_ERROR = "Validation Error";
 }

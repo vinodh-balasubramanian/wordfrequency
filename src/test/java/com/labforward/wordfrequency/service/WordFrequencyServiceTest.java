@@ -52,32 +52,36 @@ class WordFrequencyServiceTest {
 
   @Test
   void analyzeWordFrequency_whenEmptyNotebookEntry_thenVerifyException() {
+    WordFrequencyRequest request = new WordFrequencyRequest("", "word");
     IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-      new WordFrequencyRequest("", "word");
+      wordFrequencyService.analyzeWordFrequency(request);
     });
     assertEquals(MessageConstants.INVALID_NOTEBOOK_ENTRY, exception.getMessage());
   }
 
   @Test
   void analyzeWordFrequency_whenEmptyTargetWord_thenVerifyException() {
+    WordFrequencyRequest request = new WordFrequencyRequest("Word word", "");
     IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-      new WordFrequencyRequest("Word word", "");
+      wordFrequencyService.analyzeWordFrequency(request);
     });
     assertEquals(MessageConstants.EMPTY_TARGET_WORD, exception.getMessage());
   }
 
   @Test
   void analyzeWordFrequency_whenNullNotebookEntry_thenVerifyException() {
+    WordFrequencyRequest request = new WordFrequencyRequest(null, "word");
     IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-      new WordFrequencyRequest(null, "word");
+      wordFrequencyService.analyzeWordFrequency(request);
     });
     assertEquals(MessageConstants.INVALID_NOTEBOOK_ENTRY, exception.getMessage());
   }
 
   @Test
   void analyzeWordFrequency_whenNullTargetWord_thenVerifyException() {
+    WordFrequencyRequest request = new WordFrequencyRequest("word", null);
     IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-      new WordFrequencyRequest("word", null);
+      wordFrequencyService.analyzeWordFrequency(request);
     });
     assertEquals(MessageConstants.EMPTY_TARGET_WORD, exception.getMessage());
   }

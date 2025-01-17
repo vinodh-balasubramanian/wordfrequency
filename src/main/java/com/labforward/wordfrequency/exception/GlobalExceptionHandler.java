@@ -36,8 +36,8 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiErrorResponse> handleInvalidTargetWordException(
       InvalidTargetWordException ex, HttpServletRequest request) {
     logger.error("Invalid target word exception occurred: {}", ex.getMessage());
-    ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(), MessageConstants.BAD_REQUEST,
-        List.of(ex.getMessage()), request.getRequestURI());
+    ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(),
+        MessageConstants.BAD_REQUEST, List.of(ex.getMessage()), request.getRequestURI());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
@@ -52,8 +52,8 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiErrorResponse> handleTargetWordTooLongException(
       TargetWordTooLongException ex, HttpServletRequest request) {
     logger.error("Target word too long exception occurred: {}", ex.getMessage());
-    ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(), MessageConstants.BAD_REQUEST,
-        List.of(ex.getMessage()), request.getRequestURI());
+    ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(),
+        MessageConstants.BAD_REQUEST, List.of(ex.getMessage()), request.getRequestURI());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
@@ -73,8 +73,8 @@ public class GlobalExceptionHandler {
         .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
         .toList();
     logger.error("Validation error occurred: {}", messages);
-    ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(), "Validation Error",
-        messages, request.getRequestURI());
+    ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(),
+        MessageConstants.VALIDATION_ERROR, messages, request.getRequestURI());
     return ResponseEntity.badRequest().body(errorResponse);
   }
 
@@ -89,8 +89,8 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(
       IllegalArgumentException ex, HttpServletRequest request) {
     logger.error("Illegal argument exception occurred: {}", ex.getMessage());
-    ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(), MessageConstants.BAD_REQUEST,
-        List.of(ex.getMessage()), request.getRequestURI());
+    ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(),
+        MessageConstants.BAD_REQUEST, List.of(ex.getMessage()), request.getRequestURI());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
@@ -104,8 +104,8 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
     logger.error("Generic exception occurred: {}", ex.getMessage(), ex);
-    ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(), MessageConstants.BAD_REQUEST,
-        List.of(ex.getMessage()), request.getRequestURI());
+    ApiErrorResponse errorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(),
+        MessageConstants.BAD_REQUEST, List.of(ex.getMessage()), request.getRequestURI());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
 }

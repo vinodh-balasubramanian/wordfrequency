@@ -45,14 +45,14 @@ class GlobalExceptionHandlerTest {
   void givenValidationException_whenPostToApi_thenReturnsBadRequest() throws Exception {
     mockMvc.perform(post("/api/word-frequency").contentType(MediaType.APPLICATION_JSON)
             .content("{\"notebookEntry\":\"\", \"targetWord\":\"Word\"}"))
-        .andExpect(status().isInternalServerError())
+        .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.status").value(400))
-        .andExpect(jsonPath("$.error").value(MessageConstants.BAD_REQUEST))
+        .andExpect(jsonPath("$.error").value(MessageConstants.VALIDATION_ERROR))
         .andExpect(jsonPath("$.path").value("/api/word-frequency"));
   }
 
   @Test
-  void givenIllegalArgumentException_whenPostToApi_thenReturnsInternalServerError() throws Exception {
+  void givenIllegalArgumentException_whenPostToApi_thenReturnsBadRequest() throws Exception {
     mockMvc.perform(post("/api/word-frequency").contentType(MediaType.APPLICATION_JSON)
             .content("{\"noteBookEntry\":\"Word\", \"targetWord\":\"Word woo word\"}"))
         .andExpect(status().isBadRequest())
@@ -60,6 +60,17 @@ class GlobalExceptionHandlerTest {
         .andExpect(jsonPath("$.error").value(MessageConstants.BAD_REQUEST))
         .andExpect(jsonPath("$.messages").isArray())
         .andExpect(jsonPath("$.path").value("/api/word-frequency"));
+  }
+
+  @Test
+  void givenGenericException_whenPostToApi_thenReturnsInternalServerError() throws Exception {
+    mockMvc.perform(post("/api/invalidEndpoint").contentType(MediaType.APPLICATION_JSON)
+            .content("{\"invalidJsonField\": \"InvalidValue\"}"))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.status").value(400))
+        .andExpect(jsonPath("$.error").value(MessageConstants.BAD_REQUEST))
+        .andExpect(jsonPath("$.messages[0]").exists())
+        .andExpect(jsonPath("$.path").value("/api/invalidEndpoint"));
   }
 
 }
