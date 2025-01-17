@@ -54,7 +54,7 @@ sonar {
     property 'sonar.projectKey', 'wordfrequency'
     property 'sonar.projectName', 'wordfrequency'
     property 'sonar.host.url', 'http://localhost:9000'
-    property 'sonar.token', 'sqp_1f7dd31b8c6eadb3ff42b314888d90832e901361'
+    property 'sonar.token', 'sqp_6a096f50ad8f1070688a4fb657c435d397a04b8b'
     property 'sonar.sources', 'src/main/java'
     property 'sonar.tests', 'src/test/java'
     property 'sonar.java.binaries', 'build/classes/java/main'
