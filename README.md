@@ -21,7 +21,7 @@ The solution involves:
 1. Implementing a simple Spring Boot-based API to handle HTTP requests.
 2. Utilization of Apache Commons Text for finding similar words based on the Levenshtein distance.
 3. Validating input to ensure no empty or invalid values are processed.
-4. Extensive test coverage (up to 90%) and the resolution of code quality issues (0%) by integrating SonarQube for code quality checks and JaCoCo for test coverage analysis.
+4. Extensive test coverage (up to 90%) and the resolution of code quality issues (0% unresolved issues) by integrating SonarQube for code quality checks and JaCoCo for test coverage analysis.
 5. Well API documentation using OpenAPI, alongside clean code practices with meaningful comments to ensure maintainability
 
 ---
